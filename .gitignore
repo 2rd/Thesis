@@ -1,5 +1,11 @@
 Feature extraction/.idea
 Feature extraction/venv/scripts
 Feature extraction/data
+Feature extraction/polara
+Feature extraction/output
 Feature extraction/venv/Lib
+Feature extraction/venv/movie_scripts
+Feature extraction/venv/SubDownloader
 Feature extraction/venv/.ipynb_checkpoints
+Feature extraction/src/python-opensubtitles
+Feature extraction/src/subtitlesdownloader
