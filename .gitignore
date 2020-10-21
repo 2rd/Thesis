@@ -10,6 +10,7 @@ Feature extraction/venv/.ipynb_checkpoints
 Feature extraction/src/python-opensubtitles
 Feature extraction/src/subtitlesdownloader
 Recommender/Subtitile_preprocessing.py
+Recommender/__pycache__
 Feature extraction/venv/Test.ipynb
 Feature extraction/venv/download_scripts.py
 Feature extraction/venv/Test.ipynb
