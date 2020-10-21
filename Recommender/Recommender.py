@@ -3,7 +3,7 @@ from lightfm import LightFM
 
 class Recommender:
 
-    def __init__(self, item_dict={}, user_dict={}, item_features=[], interactions[], user_id=None):
+    def __init__(self, item_dict={}, user_dict={}, item_features=[], interactions=[], user_id=None):
         self.recommendations = {}
         self.item_dict = item_dict
         self.user_dict = user_dict
@@ -29,8 +29,8 @@ class Recommender:
         return explanations
 
     def known_positives(self):
-        user_index = self.get_user_dict()[user_id]
-        known_positives = items[interactions[user_index].indices]
+        user_index = self.get_user_dict()[self.user_id]
+        known_positives = self.items[self.interactionsinteractions[user_index].indices]
 
         return known_positives
 
