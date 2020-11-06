@@ -30,7 +30,7 @@ class Recommender:
 
     def known_positives(self):
         user_index = self.get_user_dict()[self.user_id]
-        known_positives = self.items[self.interactionsinteractions[user_index].indices]
+        known_positives = selfitems[self.interactionsinteractions[user_index].indices]
 
         return known_positives
 

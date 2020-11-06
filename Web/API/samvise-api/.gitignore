@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+# Div
+test.ipynb
+/data/1Mdatasets.p
+/data/1Mitem_features_df.p

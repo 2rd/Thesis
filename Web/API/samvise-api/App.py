@@ -1,17 +1,27 @@
 import flask
-from flask import request
-import pickle
-
-
-rec_models = pickle.load(open('1Mevaluation.p', 'rb'))
+import json
+from flask import request, jsonify
+import recommender as rec
 
 app = flask.Flask(__name__)
+app.config['DEBUG'] = True
 
 
-@app.route('/', methods=['GET'])
-def home():
-    eval = request.args['method']
+@app.route('/hello/', methods=['GET'])
+def hello():
+    return 'SAMVISE'
+
+
+@app.route('/get-recommendations/', methods=['GET'])
+def get_recommendations():
+    '''
+    Takes a string in json format of interactions {movieId:"x", rating:x}
+    and returns recommendations in json format.
+    '''
+    interactions = request.args['interactions']
+
     try:
-        return rec_models[eval]
+        return jsonify({'results': rec.recommend(interactions)})
+
     except KeyError:
-        return 'Invalid input'
+        return f'invalid input'
