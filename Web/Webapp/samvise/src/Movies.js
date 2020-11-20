@@ -5,7 +5,6 @@ const { default: MovieCard } = require("./MovieCard");
 const all_movies = require("./data/movies.json");
 
 const Movies = ({ match }) => {
-  const [allMovies, setAllMovies] = useState([]);
   const [genreMovies, setGenreMovies] = useState([]);
   const [currentMovies, setCurrentMovies] = useState([]);
   const [wasMounted, setWasMounted] = useState(false);
@@ -46,14 +45,8 @@ const Movies = ({ match }) => {
     setCurrentMovies(genreMovies.slice(currentlast, currentlast + 9));
     setCurrentLast(currentlast + 9);
   };
-  const onClickedMovie = (movieData, tmdbData) => {
+  const onClickedMovie = (movieData) => {
     if (!selectedMovies.includes(movieData)) {
-      movieData.title = tmdbData.title;
-      movieData.tmdbId = tmdbData.id;
-      movieData.year = tmdbData.release_date;
-      movieData.description = tmdbData.overview;
-      movieData.posterPath = tmdbData.poster_path;
-      //console.log(tmdbData);
       const selectedUpdated = getUpdatedSelectedMovies(
         selectedMovies,
         movieData
@@ -81,7 +74,7 @@ const Movies = ({ match }) => {
   ));
   const toRecLink = () =>
     selectedMovies.length > 4 ? (
-      <Link to={{ pathname: "/movie/0", state: { movies: selectedMovies } }}>
+      <Link to={{ pathname: "/rate", state: { movies: selectedMovies } }}>
         Rate movies
       </Link>
     ) : (

@@ -2,8 +2,10 @@ import flask
 import json
 from flask import request, jsonify
 import recommender as rec
+from flask_cors import CORS, cross_origin
 
 app = flask.Flask(__name__)
+cors = CORS(app)
 app.config['DEBUG'] = True
 
 

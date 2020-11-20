@@ -5,6 +5,7 @@ import Movies from "./Movies";
 import Genres from "./Genres";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Home from "./Home";
+import Recommendations from "./Recommendations";
 
 function App() {
   return (
@@ -23,7 +24,8 @@ function App() {
           /> */}
           <Route exact path="/movies/:genres" component={Movies} />
           <Route exact path="/genres" component={Genres} />
-          <Route exact path="/movie/:number" component={Movie} />
+          <Route exact path="/rate" component={Movie} />
+          <Route exact path="/recommendations" component={Recommendations} />
         </Switch>
       </div>
     </Router>
