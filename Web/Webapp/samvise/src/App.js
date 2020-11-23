@@ -15,13 +15,6 @@ function App() {
 
         <Switch>
           <Route exact path="/" component={Home} />
-          {/* <Route
-            exact
-            path="/movies"
-            render={(props) => (
-              <Movies {...props} genres={["Action", "Comedy"]} />
-            )}
-          /> */}
           <Route exact path="/movies/:genres" component={Movies} />
           <Route exact path="/genres" component={Genres} />
           <Route exact path="/rate" component={Movie} />

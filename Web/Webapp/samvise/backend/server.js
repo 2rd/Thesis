@@ -22,11 +22,13 @@ connection.once("open", () => {
   console.log("MongoDB connection established successfully!");
 });
 
+const movieDataRouter = require("./routes/moviedata");
 const usersRouter = require("./routes/users");
 const evaluationsRouter = require("./routes/evaluations");
 // const ratingsRouter = require("./routes/ratings");
 // const personalitiesRouter = require("./routes/personalities");
 
+app.use("/moviedata", movieDataRouter);
 app.use("/users", usersRouter);
 app.use("/evaluations", evaluationsRouter);
 // app.use("/ratings", ratingsRouter);
