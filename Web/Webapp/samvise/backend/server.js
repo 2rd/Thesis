@@ -24,15 +24,14 @@ connection.once("open", () => {
 
 const movieDataRouter = require("./routes/moviedata");
 const usersRouter = require("./routes/users");
-const evaluationsRouter = require("./routes/evaluations");
+const questionnairesRouter = require("./routes/questionnaires");
 // const ratingsRouter = require("./routes/ratings");
-// const personalitiesRouter = require("./routes/personalities");
 
 app.use("/moviedata", movieDataRouter);
 app.use("/users", usersRouter);
-app.use("/evaluations", evaluationsRouter);
+app.use("/questionnaires", questionnairesRouter);
+
 // app.use("/ratings", ratingsRouter);
-// app.use("/personalities", personalitiesRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);

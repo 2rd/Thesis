@@ -26,7 +26,6 @@ export default class TmdbApi {
     for (let movie of Object.entries(allMovies)) {
       if (movie[1].movieId === movieId) {
         toFetch = movie[1];
-        console.log(movie[1].imdbId);
         break;
       }
     }

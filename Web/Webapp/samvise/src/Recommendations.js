@@ -1,17 +1,19 @@
 import { useEffect, useState } from "react";
-import TmdbApi from "./helper/TmdbApi";
 import SmallMovieCard from "./SmallMovieCard";
+import * as axios from "axios";
 
 const Recommendations = ({ location }) => {
-  useEffect(() => {
-    fetchRecommendations();
-  }, []);
-
-  const [showMovieDetails, setShowMovieDetails] = useState({
+  const [displayMovie, setdisplayMovie] = useState({
     show: false,
     movie: null,
   });
   const [recs, setRecs] = useState(null);
+  const [questionnaire, setQuestionnaire] = useState(null);
+
+  useEffect(() => {
+    fetchRecommendations();
+    fetchQuestionnaire();
+  }, []);
 
   const fetchRecommendations = async () => {
     const recommendations = await fetch(
@@ -23,61 +25,102 @@ const Recommendations = ({ location }) => {
   };
 
   const movieDetailsCallback = (movie) => {
-    setShowMovieDetails({ show: true, movie: movie });
+    setdisplayMovie({ show: true, movie: movie });
+  };
+
+  const onBackClick = () => {
+    setdisplayMovie({ show: false, movie: null });
   };
 
   const recommendations = () => {
     if (recs === null) {
       return <div>LOADING</div>;
     } else {
-      return showMovieDetails.show ? (
+      return displayMovie.show ? (
         <div>
-          <button onClick={setShowMovieDetails({ show: false, movie: null })}>
-            Back
-          </button>
+          <div>
+            <h4>
+              This page will contain information about the selected movie:{" "}
+              {displayMovie.movie.data.movieData.original_title}
+            </h4>
+          </div>
+          <button onClick={onBackClick}>Back</button>
         </div>
       ) : (
         <div className="grid-container full">
-          <div>
-            <h5>LIST 1 (visual features)</h5>
+          <div className="recommendations">
+            <h6>LIST A (visual features)</h6>
             <ul className="grid-container fifths">
               {[...Object.values(recs.results.visual.top_items)]
                 .slice(0, 5)
                 .map((recommendation) => {
                   return (
-                    <li>
+                    <li key={recommendation.movieId}>
                       <SmallMovieCard
                         movieId={recommendation.movieId}
-                        showMovieDetails={movieDetailsCallback}
+                        displayMovie={movieDetailsCallback}
                       />
                     </li>
                   );
                 })}
             </ul>
           </div>
-          <div>
-            <h5>LIST 2 (subtitles)</h5>
+          <div className="recommendations">
+            <h6>LIST B (subtitles)</h6>
             <ul className="grid-container fifths">
               {[...Object.values(recs.results.subtitles.top_items)]
                 .slice(0, 5)
                 .map((recommendation) => {
                   return (
-                    <li>
+                    <li key={recommendation.movieId}>
                       <SmallMovieCard
                         movieId={recommendation.movieId}
-                        showMovieDetails={movieDetailsCallback}
+                        displayMovie={movieDetailsCallback}
                       />
                     </li>
                   );
                 })}
             </ul>
           </div>
+          <p>Click the thumbnails to see movie info and trailer</p>
         </div>
       );
-      //   console.log(Object.values(recs.results.subtitles.top_items));
     }
   };
-  return <div>{recommendations()}</div>;
+
+  const fetchQuestionnaire = async () => {
+    const questionnaire = await axios.get(
+      "http://localhost:5000/questionnaires/1TwH5KhBs"
+    );
+    setQuestionnaire(questionnaire.data);
+  };
+
+  return (
+    <div>
+      <div>{recommendations()}</div>
+
+      {displayMovie.show ? (
+        <div></div>
+      ) : questionnaire !== null && recs !== null ? (
+        <div>
+          <p>
+            List A and B contain the top movie recommendations for you from
+            different "recommenders". Please answer the following questions to
+            help us understand your preferences about these recommenders.
+          </p>
+          <ol>
+            {[...Object.values(questionnaire.questions)]
+              .slice(0, 5)
+              .map((question) => {
+                return <li key={question.key}>{question.text}</li>;
+              })}
+          </ol>
+        </div>
+      ) : (
+        <div>Loading questions</div>
+      )}
+    </div>
+  );
 };
 
 export default Recommendations;

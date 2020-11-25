@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const { default: MovieCard } = require("./MovieCard");
-const all_movies = require("./data/movies.json");
 
 const Movies = ({ match }) => {
   const [genreMovies, setGenreMovies] = useState([]);
@@ -16,10 +16,9 @@ const Movies = ({ match }) => {
   }, []);
 
   const fetchMovies = async () => {
-    const fetchMovies = all_movies;
-
+    const fetchMovies = await axios.get("http://localhost:5000/moviedata");
     const movies = fetchGenreMovies(
-      fetchMovies,
+      fetchMovies.data,
       match.params.genres.split(",")
     );
     setGenreMovies(movies);
