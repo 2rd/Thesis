@@ -25,11 +25,13 @@ connection.once("open", () => {
 const movieDataRouter = require("./routes/moviedata");
 const usersRouter = require("./routes/users");
 const questionnairesRouter = require("./routes/questionnaires");
+const answerRouter = require("./routes/answers");
 // const ratingsRouter = require("./routes/ratings");
 
 app.use("/moviedata", movieDataRouter);
 app.use("/users", usersRouter);
 app.use("/questionnaires", questionnairesRouter);
+app.use("/answers", answerRouter);
 
 // app.use("/ratings", ratingsRouter);
 

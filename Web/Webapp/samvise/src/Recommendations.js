@@ -1,18 +1,22 @@
 import { useEffect, useState } from "react";
 import SmallMovieCard from "./SmallMovieCard";
 import * as axios from "axios";
+import Questionnaire from "./Questionnaire";
 
 const Recommendations = ({ location }) => {
   const [displayMovie, setdisplayMovie] = useState({
     show: false,
     movie: null,
+    trailer: "undefined",
   });
   const [recs, setRecs] = useState(null);
-  const [questionnaire, setQuestionnaire] = useState(null);
+  const [trailerFrame, setTrailerFrame] = useState(null);
+  // const [questionnaire, setQuestionnaire] = useState(null);
+  // const [answers, setAnswers] = useState([]);
 
   useEffect(() => {
     fetchRecommendations();
-    fetchQuestionnaire();
+    // fetchQuestionnaire();
   }, []);
 
   const fetchRecommendations = async () => {
@@ -25,10 +29,21 @@ const Recommendations = ({ location }) => {
   };
 
   const movieDetailsCallback = (movie) => {
-    setdisplayMovie({ show: true, movie: movie });
+    display(movie);
+    // setdisplayMovie({ show: true, movie: movie });
+  };
+
+  const display = async (movie) => {
+    const trailer = await movie.getMovieTrailer();
+    setdisplayMovie({
+      show: true,
+      movie: movie,
+      trailer: trailer.data.results[0].key,
+    });
   };
 
   const onBackClick = () => {
+    console.log();
     setdisplayMovie({ show: false, movie: null });
   };
 
@@ -37,12 +52,18 @@ const Recommendations = ({ location }) => {
       return <div>LOADING</div>;
     } else {
       return displayMovie.show ? (
-        <div>
+        <div className="grid-container full">
           <div>
+            <div className="iframeContainer">
+              <iframe
+                src={`https://www.youtube.com/embed/${displayMovie.trailer}`}
+              ></iframe>
+            </div>
+
             <h4>
-              This page will contain information about the selected movie:{" "}
-              {displayMovie.movie.data.movieData.original_title}
+              {`${displayMovie.movie.data.movieData.original_title} (${displayMovie.movie.data.movieData.release_date})`}
             </h4>
+            <p>{displayMovie.movie.data.movieData.overview}</p>
           </div>
           <button onClick={onBackClick}>Back</button>
         </div>
@@ -88,12 +109,21 @@ const Recommendations = ({ location }) => {
     }
   };
 
-  const fetchQuestionnaire = async () => {
-    const questionnaire = await axios.get(
-      "http://localhost:5000/questionnaires/1TwH5KhBs"
-    );
-    setQuestionnaire(questionnaire.data);
-  };
+  // const newAnswer = (questionKey, answer) => {
+  //   const answerObj = {
+  //     userId: "",
+  //     questionnaireId: "1TwH5KhBs",
+  //     questionKey: questionKey,
+  //     answer: answer,
+  //   };
+  // };
+
+  // const fetchQuestionnaire = async () => {
+  //   const questionnaire = await axios.get(
+  //     "http://localhost:5000/questionnaires/1TwH5KhBs"
+  //   );
+  //   setQuestionnaire(questionnaire.data);
+  // };
 
   return (
     <div>
@@ -101,20 +131,21 @@ const Recommendations = ({ location }) => {
 
       {displayMovie.show ? (
         <div></div>
-      ) : questionnaire !== null && recs !== null ? (
+      ) : recs !== null ? (
         <div>
           <p>
             List A and B contain the top movie recommendations for you from
             different "recommenders". Please answer the following questions to
             help us understand your preferences about these recommenders.
           </p>
-          <ol>
+          <Questionnaire questionnaireId="1TwH5KhBs" />
+          {/* <ol>
             {[...Object.values(questionnaire.questions)]
               .slice(0, 5)
               .map((question) => {
                 return <li key={question.key}>{question.text}</li>;
               })}
-          </ol>
+          </ol> */}
         </div>
       ) : (
         <div>Loading questions</div>

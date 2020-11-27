@@ -376,6 +376,15 @@ input[type="button"].button-primary:focus {
   border-color: var(--accent-color-hover);
 }
 
+.alternativeBtn {
+  height: 100px;
+  white-space: normal;
+  line-height: 12px;
+  text-transform: none;
+  padding-left: 5%;
+  padding-right: 5%;
+}
+
 /* Forms
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 input[type="email"],
@@ -564,8 +573,20 @@ hr {
 }
 
 iframe {
-  width: fit-content;
-  height: fit-content;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.iframeContainer {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  padding-top: 56.25%;
 }
 
 /* Clearing

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Api from "./helper/Api";
 import { Link } from "react-router-dom";
 
-const Movie = ({ location, match }) => {
+const Rate = ({ location, match }) => {
   const [currentMovie, setCurrentMovie] = useState(0);
   const [movieData, setMovieData] = useState([]);
   const [trailerFrame, setTrailerFrame] = useState(null);
@@ -40,11 +40,11 @@ const Movie = ({ location, match }) => {
   };
 
   return (
-    <div>
-      <div className="container">{trailerFrame}</div>
+    <div className="grid-container full">
+      <div className="iframeContainer">{trailerFrame}</div>
       <div>{nextButton()}</div>
     </div>
   );
 };
 
-export default Movie;
+export default Rate;

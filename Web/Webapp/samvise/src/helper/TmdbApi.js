@@ -29,9 +29,21 @@ export default class TmdbApi {
         break;
       }
     }
-    if (toFetch.imdbId.length < 6) {
-      toFetch.imdbId = "0" + toFetch.imdbId;
+    let idFix = "";
+    if (toFetch.imdbId.length < 7) {
+      idFix = "0";
+      if (toFetch.imdbId.length < 6) {
+        idFix = "00";
+        if (toFetch.imdbId.length < 5) {
+          idFix = "000";
+          if (toFetch.imdbId.length < 4) {
+            idFix = "0000";
+          }
+        }
+      }
     }
+    toFetch.imdbId = idFix + toFetch.imdbId;
+
     this.fetchMovie(toFetch);
     return toFetch;
   };
@@ -63,7 +75,7 @@ export default class TmdbApi {
       try {
         this.setData({ ...this.data, isFetching: true, wasFetched: false });
         const response = await axios.get(
-          `https://api.themoviedb.org/3/find/tt0${toFetch.imdbId}?api_key=${this.api_key}&language=en-US&external_source=imdb_id`
+          `https://api.themoviedb.org/3/find/tt${toFetch.imdbId}?api_key=${this.api_key}&language=en-US&external_source=imdb_id`
         );
         const movie = response.data.movie_results[0];
         movie.release_date = movie.release_date.substr(0, 4);

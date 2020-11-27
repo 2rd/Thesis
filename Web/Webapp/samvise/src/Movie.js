@@ -68,11 +68,15 @@ const Movie = ({ location, match }) => {
       <li key={director}>{director}</li>
     ));
     return (
-      <div>
-        <h6>Cast:</h6>
-        <ul>{cast}</ul>
-        <h6>Director:</h6>
-        <ul>{directors}</ul>
+      <div className="grid-container halves">
+        <div>
+          <h6>Cast:</h6>
+          <ul>{cast}</ul>
+        </div>
+        <div>
+          <h6>Director:</h6>
+          <ul>{directors}</ul>
+        </div>
       </div>
     );
   };
@@ -128,8 +132,7 @@ const Movie = ({ location, match }) => {
 
   return wasFetched ? (
     <div className="grid-container full">
-      <div className="container">{trailerFrame}</div>
-      <h6>Your rating:</h6>
+      <div className="iframeContainer">{trailerFrame}</div>
       <StarRating ratingCallback={ratingCallback} key={currentMovie} />
       {movieInfo()}
       {credits !== null ? movieCredits() : <div></div>}

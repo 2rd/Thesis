@@ -9,7 +9,7 @@ router.route("/").get((req, res) => {
 
 router.route("/add").post((req, res) => {
   const userId = req.body.userId;
-  const questionnaireId = Number(req.body.questionnaireId);
+  const questionnaireId = String(req.body.questionnaireId);
   const questionKey = Number(req.body.questionKey);
   const answer = String(req.body.answer);
   const newAnswer = new Answer({
