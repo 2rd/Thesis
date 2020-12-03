@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import SmallMovieCard from "./SmallMovieCard";
+import SmallMovieCard from "../SmallMovieCard/SmallMovieCard";
 import * as axios from "axios";
-import Questionnaire from "./Questionnaire";
+import Questionnaire from "../Questionnaire/Questionnaire";
 
 const Recommendations = ({ location }) => {
   const [displayMovie, setdisplayMovie] = useState({
@@ -20,12 +20,13 @@ const Recommendations = ({ location }) => {
   }, []);
 
   const fetchRecommendations = async () => {
-    const recommendations = await fetch(
+    const recommendations = await axios.get(
       `https://samvise-api.herokuapp.com/get-recommendations/?interactions=${JSON.stringify(
         location.state.ratings
       )}`
     );
-    setRecs(await recommendations.json());
+
+    setRecs(await recommendations.data);
   };
 
   const movieDetailsCallback = (movie) => {
@@ -61,7 +62,7 @@ const Recommendations = ({ location }) => {
             </div>
 
             <h4>
-              {`${displayMovie.movie.data.movieData.original_title} (${displayMovie.movie.data.movieData.release_date})`}
+              {`${displayMovie.movie.data.movieData.title} (${displayMovie.movie.data.movieData.release_date})`}
             </h4>
             <p>{displayMovie.movie.data.movieData.overview}</p>
           </div>

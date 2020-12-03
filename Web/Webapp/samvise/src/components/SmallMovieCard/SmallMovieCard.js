@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import TmdbApi from "./helper/TmdbApi";
+import TmdbApi from "../../helper/TmdbApi";
 
 const SmallMovieCard = (props) => {
   const [api, setApi] = useState(null);
@@ -28,10 +28,9 @@ const SmallMovieCard = (props) => {
   };
 
   return wasFetched ? (
-    <div className="card" onClick={onClickedDetails}>
+    <button className="cardContainer small" onClick={onClickedDetails}>
       <div>
         <img
-          className="moviePoster"
           src={`http://image.tmdb.org/t/p/w92${api.data.movieData.poster_path}`}
           alt={api.data.movieData.title}
         ></img>
@@ -42,7 +41,7 @@ const SmallMovieCard = (props) => {
           {api.data.movieData.title + ` (${api.data.movieData.release_date})`}
         </h6>
       </div> */}
-    </div>
+    </button>
   ) : (
     <div>LOADING</div>
   );

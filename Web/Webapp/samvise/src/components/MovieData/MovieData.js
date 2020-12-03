@@ -31,7 +31,6 @@ const MovieData = (props) => {
         const movie = response.data.movie_results[0];
         movie.release_date = movie.release_date.substr(0, 4);
         movie.movieId = toFetch[1].movieId;
-        movie.popularity = toFetch[1].popularity;
         movie.genres = toFetch[1].genres;
         const trailer = await axios.get(
           `https://api.themoviedb.org/3/movie/${movie.id}/videos`

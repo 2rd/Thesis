@@ -78,9 +78,9 @@ export default class TmdbApi {
           `https://api.themoviedb.org/3/find/tt${toFetch.imdbId}?api_key=${this.api_key}&language=en-US&external_source=imdb_id`
         );
         const movie = response.data.movie_results[0];
+
         movie.release_date = movie.release_date.substr(0, 4);
         movie.movieId = toFetch.movieId;
-        movie.popularity = toFetch.popularity;
         movie.genres = toFetch.genres;
 
         this.setData({
@@ -91,6 +91,7 @@ export default class TmdbApi {
         });
         this.onFetchedCallback(true);
       } catch (e) {
+        console.log(toFetch);
         console.log(e);
         this.setData({ ...this.data, isFetching: false, wasFetched: false });
       }

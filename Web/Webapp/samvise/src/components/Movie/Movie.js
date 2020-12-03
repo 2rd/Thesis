@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import TmdbApi from "./helper/TmdbApi";
+import TmdbApi from "../../helper/TmdbApi";
 import { Link } from "react-router-dom";
-import StarRating from "./StarRating";
+import StarRating from "../StarRating/StarRating";
 
 const Movie = ({ location, match }) => {
   const [api, setApi] = useState(null);

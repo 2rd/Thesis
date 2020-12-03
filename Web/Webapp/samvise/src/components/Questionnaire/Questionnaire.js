@@ -81,7 +81,7 @@ const Questionnaire = (props) => {
   return (
     <div>
       {questionnaire !== null ? (
-        <div>
+        <div className="grid-container full questionnaire">
           {currentQuestion < Object.keys(questionnaire.questions).length + 1 ? (
             <ol
               className="grid-container full"
