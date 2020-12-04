@@ -1,23 +1,26 @@
 import * as axios from "axios";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { authContext } from "../../contexts/AuthContext";
 
-const Login = () => {
-  const login = async (username, password) => {
-    axios.post("http://localhost:5000/auth/login", {
-      username: username,
-      password: password,
-    });
-  };
+const Login = ({ history }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [credentials, setCredentials] = useState({
-    username: "",
-    password: "",
-  });
+  const { setAuthData } = useContext(authContext);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     login(username, password);
+    history.replace("/");
   };
+
+  const login = async (username, password) => {
+    const loginReq = await axios.post("http://localhost:5000/auth/login", {
+      username: username,
+      password: password,
+    });
+    setAuthData(loginReq.data);
+  };
+
   const handleInputChange = (e) => {
     const target = e.target;
     const value = target.value;
@@ -52,7 +55,7 @@ const Login = () => {
             onChange={handleInputChange}
           ></input>
         </label>
-        <input type="submit" value="Submit"></input>
+        <button type="submit">Sign in</button>
       </form>
     </div>
   );

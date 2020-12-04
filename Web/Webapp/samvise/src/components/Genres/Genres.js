@@ -7,7 +7,7 @@ const Genres = () => {
     "Adventure",
     "Comedy",
     "Crime",
-    "Children's",
+    "Children",
     "Documentary",
     "Drama",
     "Fantasy",
@@ -15,7 +15,7 @@ const Genres = () => {
     "Mystery",
     "Musical",
     "Romance",
-    "Sci-fi",
+    "Sci-Fi",
     "Thriller",
     "War",
   ];
