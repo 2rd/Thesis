@@ -98,16 +98,16 @@ export default class TmdbApi {
     }
   };
 
-  getMovieTrailer = () => {
-    return this.init().get(`movie/${this.data.movieData.id}/videos`);
+  getMovieTrailer = async () => {
+    return await this.init().get(`movie/${this.data.movieData.id}/videos`);
   };
 
-  getCredits = () => {
-    return this.init().get(`movie/${this.data.movieData.id}/credits`);
+  getCredits = async () => {
+    return await this.init().get(`movie/${this.data.movieData.id}/credits`);
   };
 
-  getTmdbConfig = () => {
-    return this.init().get("/configuration");
+  getTmdbConfig = async () => {
+    return await this.init().get("/configuration");
   };
 
   setTmdbConfiguration = () => {

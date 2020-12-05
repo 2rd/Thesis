@@ -39,7 +39,10 @@ const Recommendations = ({ location }) => {
     setdisplayMovie({
       show: true,
       movie: movie,
-      trailer: trailer.data.results[0].key,
+      trailer:
+        trailer.data.results.length > 0
+          ? trailer.data.results[0].key
+          : "undefined",
     });
   };
 

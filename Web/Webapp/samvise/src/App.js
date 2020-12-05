@@ -9,6 +9,7 @@ import Recommendations from "./components/Recommendations/Recommendations";
 import Login from "./components/Login/Login";
 import Panel from "./components/Panel/Panel";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
+import Register from "./components/Register/Register";
 
 function App() {
   return (
@@ -17,8 +18,9 @@ function App() {
         <header className="App-header"></header>
 
         <Switch>
-          <PrivateRoute exact path="/" component={Panel} />
+          <Route exact path="/" component={Home} />
           <Route exact path="/login" component={Login} />
+          <Route exact path="/register" component={Register} />
           <PrivateRoute exact path="/movies/:genres" component={Movies} />
           <PrivateRoute exact path="/genres" component={Genres} />
           <PrivateRoute exact path="/rate" component={Movie} />

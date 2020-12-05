@@ -40,7 +40,7 @@
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 html {
   /* default theme: light background, dark text, blue accent */
-  --theme-hue: 0;
+  --theme-hue: 0; /* white */
   --accent-hue: 194; /* blue */
 
   --text-color-richer: hsl(var(--theme-hue), 0%, 5%); /* #0d0d0d		*/

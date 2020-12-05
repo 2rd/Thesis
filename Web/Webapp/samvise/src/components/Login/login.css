@@ -1,0 +1,11 @@
+.errorMessage {
+  color: crimson;
+}
+.grid-container.full.loginContainer {
+  min-width: 240px;
+  max-width: 350px;
+  padding: 20px;
+  line-height: initial;
+  margin-top: 20px;
+  white-space: normal;
+}

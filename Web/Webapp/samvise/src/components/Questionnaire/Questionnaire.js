@@ -4,7 +4,7 @@ import * as axios from "axios";
 const Questionnaire = (props) => {
   const [currentQuestion, setCurrentQuestion] = useState(1);
   const [questionnaire, setQuestionnaire] = useState(null);
-  const [answers, setAnswers] = useState([]);
+  const [answers, setAnswers] = useState({});
 
   useEffect(() => {
     fetchQuestionnaire();
@@ -20,14 +20,8 @@ const Questionnaire = (props) => {
   };
 
   const addAnswer = (questionKey, answer) => {
-    const answerObj = {
-      userId: "test",
-      questionnaireId: "1TwH5KhBs",
-      questionKey: questionKey,
-      answer: answer,
-    };
     let prevAnswers = answers;
-    prevAnswers.push(answerObj);
+    prevAnswers[questionKey] = answer;
     setAnswers(prevAnswers);
   };
 
@@ -37,14 +31,20 @@ const Questionnaire = (props) => {
   };
 
   const submitAnswers = () => {
-    for (let answer of answers) {
-      postAnswer(answer);
-    }
+    const answer = {
+      questionnaireId: props.questionnaireId,
+      answers: answers,
+    };
+    postAnswer(answer);
   };
 
   const postAnswer = async (answer) => {
-    const res = await axios.post("http://localhost:5000/answers/add", answer);
-    console.log(res.data);
+    try {
+      const res = await axios.post("http://localhost:5000/answers/add", answer);
+      console.log(res.data);
+    } catch (err) {
+      console.log(err.data);
+    }
   };
 
   const createAlternatives = (questionKey, input) => {

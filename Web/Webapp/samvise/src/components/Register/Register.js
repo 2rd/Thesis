@@ -1,9 +1,9 @@
 import * as axios from "axios";
-import "./login.css";
+import "./register.css";
 import { useContext, useState } from "react";
 import { authContext } from "../../contexts/AuthContext";
 
-const Login = ({ history }) => {
+const Register = ({ history }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -11,7 +11,21 @@ const Login = ({ history }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    login(username, password);
+    register(username, password);
+  };
+
+  const register = async (username, password) => {
+    try {
+      const registrationReq = await axios
+        .post("http://localhost:5000/auth/register", {
+          username: username,
+          password: password,
+        })
+        .then(() => login(username, password));
+    } catch (err) {
+      setError(err.response.data);
+      console.log(err.response.data);
+    }
   };
 
   const login = async (username, password) => {
@@ -65,10 +79,10 @@ const Login = ({ history }) => {
           onChange={handleInputChange}
         ></input>
         <p className="errorMessage">{error}</p>
-        <button type="submit">Sign in</button>
+        <button type="submit">Register</button>
       </form>
     </div>
   );
 };
 
-export default Login;
+export default Register;

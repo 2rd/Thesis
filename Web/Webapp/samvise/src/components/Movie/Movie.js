@@ -43,7 +43,11 @@ const Movie = ({ location, match }) => {
   };
 
   const createTrailerFrame = (trailer) => {
-    const trailerKey = trailer.data.results[0].key;
+    console.log(trailer);
+    const trailerKey =
+      trailer.data.results.length > 0
+        ? trailer.data.results[0].key
+        : "undefined";
     return (
       <iframe src={`https://www.youtube.com/embed/${trailerKey}`}></iframe>
     );
