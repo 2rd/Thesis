@@ -43,7 +43,7 @@ const SmallMovieCard = (props) => {
       </div> */}
     </button>
   ) : (
-    <div>LOADING</div>
+    <div></div>
   );
 };
 

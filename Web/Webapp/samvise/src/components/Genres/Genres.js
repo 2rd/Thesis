@@ -19,6 +19,7 @@ const Genres = () => {
     "Thriller",
     "War",
   ];
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {}, []);
 
@@ -44,6 +45,9 @@ const Genres = () => {
         genre,
         false
       );
+      if (updatedGenres.length > 0) {
+        setErrorMessage(null);
+      }
       setSelectedGenres(updatedGenres);
     } else {
       const updatedGenres = getUpdatedSelectedGenres(
@@ -51,6 +55,9 @@ const Genres = () => {
         genre,
         true
       );
+      if (updatedGenres.length > 0) {
+        setErrorMessage(null);
+      }
       setSelectedGenres(updatedGenres);
     }
   };
@@ -71,7 +78,7 @@ const Genres = () => {
   const genreButtons = genres.map((genre) => (
     <li key={genre}>
       <button
-        className={isSelected(genre) ? "selected" : ""}
+        className={isSelected(genre) ? "genreBtn selectedGenreBtn" : "genreBtn"}
         onClick={() => onGenreClicked(genre)}
       >
         {genre}
@@ -81,19 +88,28 @@ const Genres = () => {
 
   return (
     <div>
-      <h2>Genre Preferences</h2>
+      <h4>Pick your favorite genres</h4>
+      <p className="errorMessage">{errorMessage}</p>
       <div>
-        <ul className="grid-container">{genreButtons}</ul>
+        <ul className="grid-container thirds narrow">{genreButtons}</ul>
       </div>
-      <div>
-        {selectedGenres.length >= 1 ? (
-          <p>
-            <Link to={`/movies/${selectedGenres}`}>Continue</Link>
-          </p>
-        ) : (
-          /* <a>Select {3 - selectedGenres.length} more genres</a> */
-          <a>Select at least 1 of your favorite genres</a>
-        )}
+
+      <div className="space-bottom50"></div>
+      <div className="bottom-container">
+        <div className="nextBtnContainer">
+          {selectedGenres.length >= 1 ? (
+            <Link to={`/movies/${selectedGenres}`}>
+              <button>Next</button>
+            </Link>
+          ) : (
+            <button
+              className="disabledBtn"
+              onClick={() => setErrorMessage("Pick at least 1 genre")}
+            >
+              Next
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -21,7 +21,7 @@ const Login = ({ history }) => {
         password: password,
       });
       setAuthData(loginReq.data);
-      history.replace("/genres");
+      history.replace("/demography");
     } catch (err) {
       setError(err.response.data);
       console.log(err.response.data);

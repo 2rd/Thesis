@@ -11,6 +11,7 @@ const Movie = ({ location, match }) => {
   const [ratings, setRatings] = useState({});
   const [isRated, setIsRated] = useState(false);
   const [wasFetched, setWasFetched] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     if (wasFetched) {
@@ -43,7 +44,6 @@ const Movie = ({ location, match }) => {
   };
 
   const createTrailerFrame = (trailer) => {
-    console.log(trailer);
     const trailerKey =
       trailer.data.results.length > 0
         ? trailer.data.results[0].key
@@ -59,8 +59,9 @@ const Movie = ({ location, match }) => {
       const nextMovie = currentMovie + 1;
       setCurrentMovie(nextMovie);
       setWasFetched(false);
+      setErrorMessage(null);
     } else {
-      console.log("Must provide a rating to proceed");
+      setErrorMessage("Rate the movie to continue");
     }
   };
 
@@ -118,14 +119,14 @@ const Movie = ({ location, match }) => {
 
   const next = () => {
     return (
-      <div>
+      <div className="nextBtnContainer">
         {currentMovie < location.state.movies.length - 1 ? (
           <button onClick={() => onNextClick()}>Next</button>
         ) : isRated ? (
           <Link
             to={{ pathname: "/recommendations", state: { ratings: ratings } }}
           >
-            Continue
+            <button>Next</button>
           </Link>
         ) : (
           <p>Continue</p>
@@ -135,16 +136,19 @@ const Movie = ({ location, match }) => {
   };
 
   return wasFetched ? (
-    <div className="grid-container full">
-      <div className="iframeContainer">{trailerFrame}</div>
-      <StarRating ratingCallback={ratingCallback} key={currentMovie} />
-      {movieInfo()}
-      {credits !== null ? movieCredits() : <div></div>}
-
-      {next()}
+    <div>
+      <div className="grid-container full narrow">
+        <div className="iframeContainer">{trailerFrame}</div>
+        <StarRating ratingCallback={ratingCallback} key={currentMovie} />
+        <div className="errorMessage">{errorMessage}</div>
+        {movieInfo()}
+        {credits !== null ? movieCredits() : <div></div>}
+      </div>
+      <div className="space-bottom50"></div>
+      <div className="bottom-container">{next()}</div>
     </div>
   ) : (
-    <div>LOADING</div>
+    <div className="space-top"></div>
   );
 };
 

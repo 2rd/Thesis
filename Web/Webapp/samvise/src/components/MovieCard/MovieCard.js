@@ -64,7 +64,7 @@ const MovieCard = (props) => {
             className="moviePoster"
           ></img>
           <div>
-            <p>{movieData.title + ` (${movieData.release_date})`}</p>
+            {/* <p>{movieData.title + ` (${movieData.release_date})`}</p> */}
           </div>
         </div>
       ) : (

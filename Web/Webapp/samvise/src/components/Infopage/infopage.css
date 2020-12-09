@@ -1,0 +1,29 @@
+div {
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .button.bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0%;
+    z-index: 9999;
+    border-radius: 0;
+  }
+}
+@media (min-width: 600px) {
+  .button.bottom {
+    position: relative;
+    max-width: 400px;
+  }
+}
+
+.grid-container.full.info {
+  max-width: 500px;
+}
+.info-container {
+  text-align: left;
+}
+li {
+  font-size: 12px;
+}

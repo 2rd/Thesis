@@ -39,31 +39,32 @@
 /* CSS Variables
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 html {
+  --color1: #03182a;
+  --color2: #0f3c3f;
+  --color3: #fbd160;
+  --color4: #469580;
+  --color5: #e3dba9;
+  --color6: #fdfffc;
+
+  background-color: var(--color1);
+
   /* default theme: light background, dark text, blue accent */
   --theme-hue: 0;
   --accent-hue: 194; /* blue */
 
-  --text-color-richer: hsl(var(--theme-hue), 0%, 5%); /* #0d0d0d		*/
-  --text-color-normal: hsl(
-    var(--theme-hue),
-    0%,
-    13%
+  --text-color-richer: var(--color6); /* #0d0d0d		*/
+  --text-color-normal: var(
+    --color6
   ); /* #222222 		text color; button:hover:focus color */
-  --text-color-softer: hsl(
-    var(--theme-hue),
-    0%,
-    33%
+  --text-color-softer: var(
+    --color6
   ); /* #555555 		button color; button:hover border */
 
-  --accent-color: hsl(
-    var(--accent-hue),
-    86%,
-    57%
+  --accent-color: var(
+    --color1
   ); /* #33C3F0 		link; button-primary bg+border; textarea,select:focus border */
-  --accent-color-hover: hsl(
-    var(--accent-hue),
-    76%,
-    49%
+  --accent-color-hover: var(
+    --color2
   ); /* #1EAEDB 		link hover; button-primary:hover:focus bg+border */
 
   --border-color: hsl(var(--theme-hue), 0%, 73%); /* #bbbbbb		button border */
@@ -73,15 +74,13 @@ html {
     82%
   ); /* #d1d1d1		textarea,select,code,td,hr border	 */
 
-  --background-color: white; /* transparent body background; textarea,select background */
-  --background-color-softer: hsl(var(--theme-hue), 0%, 95%);
-  --code-background: hsl(
-    var(--theme-hue),
-    0%,
-    95%
-  ); /* #f1f1f1 		code background*/
+  --background-color: var(
+    --color1
+  ); /* transparent body background; textarea,select background */
+  --background-color-softer: var(--color2);
+  --code-background: var(--color2); /* #f1f1f1 		code background*/
 
-  --button-primary-color: white;
+  --button-primary-color: var(--color1);
 
   /* Note: Skeleton was based off a 10px font sizing for REM  */
   /* 62.5% of typical 16px browser default = 10px */
@@ -89,71 +88,6 @@ html {
 
   /* Grid Defaults - default to match orig skeleton settings */
   --grid-max-width: 960px;
-}
-
-/*  Dark Theme
-	Note: prefers-color-scheme selector support is still limited, but 
-	included for future and an example of defining a different base 'theme'
-*/
-@media (prefers-color-scheme: dark) {
-  :html {
-    /* dark theme: light background, dark text, blue accent */
-    --theme-hue: 0; /* black */
-    --accent-hue: 194; /* blue */
-
-    --text-color-richer: hsl(var(--theme-hue), 0%, 95%); /* 		*/
-    --text-color-normal: hsl(
-      var(--theme-hue),
-      0%,
-      80%
-    ); /* text color; button:hover:focus color */
-    --text-color-softer: hsl(
-      var(--theme-hue),
-      0%,
-      67%
-    ); /* button color; button:hover border */
-
-    --accent-color: hsl(
-      var(--accent-hue),
-      76%,
-      49%
-    ); /* link; button-primary bg+border; textarea,select:focus border */
-    --accent-color-hover: hsl(
-      var(--accent-hue),
-      86%,
-      57%
-    ); /* link hover; button-primary:hover:focus bg+border */
-
-    --border-color: hsl(var(--theme-hue), 0%, 27%); /* button border */
-    --border-color-softer: hsl(
-      var(--theme-hue),
-      0%,
-      20%
-    ); /* textarea,select,code,td,hr border	 */
-
-    --background-color: hsl(
-      var(--theme-hue),
-      0%,
-      12%
-    ); /* body background; textarea,select background */
-    --background-color-softer: hsl(var(--theme-hue), 0%, 18%);
-    --code-background: hsl(var(--theme-hue), 0%, 5%); /* code background*/
-
-    --button-primary-color: white;
-  }
-
-  img.value-img {
-    filter: invert(0.8);
-  }
-  /* TODO - test dialing back image intensity on dark background
-  img {
-    opacity: .80;
-    transition: opacity .5s ease-in-out;
-  }
-  img:hover {
-    opacity: 1;
-  }
-  */
 }
 
 /* Grid
@@ -196,6 +130,9 @@ html {
   }
 
   /* basic grids */
+  .grid-container.sevenths {
+    grid-template-columns: repeat(7, 1fr);
+  }
   .grid-container.fifths {
     grid-template-columns: repeat(5, 1fr);
   }
@@ -240,6 +177,7 @@ h6 {
   margin-top: 0;
   margin-bottom: 2rem;
   font-weight: 300;
+  color: var(--color3);
 }
 h1 {
   font-size: 4rem;
@@ -270,6 +208,7 @@ h6 {
   font-size: 1.5rem;
   line-height: 1.6;
   letter-spacing: 0;
+  padding-top: 1rem;
 }
 
 @media (max-width: 500) {
@@ -308,10 +247,10 @@ p {
 /* Links
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 a {
-  color: var(--accent-color);
+  color: var(--color5);
 }
 a:hover {
-  color: var(--accent-color-hover);
+  color: var(--color4);
 }
 
 /* Buttons
@@ -333,9 +272,8 @@ input[type="button"] {
   text-transform: uppercase;
   text-decoration: none;
   white-space: nowrap;
-  background-color: transparent;
   border-radius: 4px;
-  border: 1px solid var(--border-color);
+  border: 0;
   cursor: pointer;
   box-sizing: border-box;
 }
@@ -376,14 +314,74 @@ input[type="button"].button-primary:focus {
   background-color: var(--accent-color-hover);
   border-color: var(--accent-color-hover);
 }
-
-.alternativeBtn {
-  height: 100px;
+@media (min-width: 600px) {
+  .likert5 {
+    height: 100px;
+    width: 100px;
+  }
+}
+@media (max-width: 600px) {
+  .likert5 {
+    height: 65px;
+    width: 65px;
+  }
+  .grid-container.fifths {
+    gap: 0;
+  }
+}
+.likert5 {
+  margin: 0.5px;
   white-space: normal;
   line-height: 12px;
   text-transform: none;
   padding-left: 5%;
   padding-right: 5%;
+  box-shadow: 0 0 0 0;
+  border-radius: 0;
+}
+
+.genderBtn {
+  margin: auto;
+  height: 80px;
+  width: 100px;
+  white-space: normal;
+  line-height: 12px;
+  text-transform: none;
+  padding-left: 5%;
+  padding-right: 5%;
+}
+
+@media (max-width: 500px) {
+  .likert7 {
+    height: 40px;
+    width: 40px;
+    white-space: normal;
+    line-height: 12px;
+    text-transform: none;
+    padding-left: 5%;
+    padding-right: 5%;
+    margin: auto;
+  }
+  .genderBtn {
+    height: 65px;
+    width: 70px;
+  }
+}
+@media (min-width: 500px) {
+  .likert7 {
+    height: 65px;
+    width: 65px;
+    white-space: normal;
+    line-height: 12px;
+    text-transform: none;
+    padding-left: 5%;
+    padding-right: 5%;
+    margin: auto;
+  }
+}
+
+.likert7Txt {
+  font-size: 11px;
 }
 
 /* Forms
@@ -399,8 +397,8 @@ textarea,
 select {
   height: 38px;
   padding: 6px 10px; /* The 6px vertically centers text on FF, ignored by Webkit */
-  background-color: var(--background-color);
-  border: 1px solid var(--border-color-softer);
+
+  border: 1px solid var(--color1);
   border-radius: 4px;
   box-shadow: none;
   box-sizing: border-box;
@@ -441,7 +439,6 @@ label,
 legend {
   display: block;
   margin-bottom: 0.5rem;
-  font-weight: 600;
 }
 fieldset {
   padding: 0;
@@ -626,16 +623,28 @@ there.
 /* Card
 ---------------------------------*/
 
+button {
+  background-color: var(--color2);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1);
+  transition: 0.3s;
+  border: none;
+}
+button:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 1);
+  background-color: var(--color4);
+}
+
 .cardContainer {
   /* Add shadows to create the "card" effect */
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1);
   transition: 0.3s;
+  border: none;
 }
 
 /* On mouse-over, add a deeper shadow */
 .cardContainer:hover {
-  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-  background-color: rgb(255, 232, 183);
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 1);
+  background-color: var(--color4);
 }
 
 /* Add some padding inside the card container */
@@ -660,23 +669,105 @@ there.
   min-height: 138px;
 }
 
+.smallCardLi {
+  margin: 0 2px;
+}
+
 .moviePoster {
   max-width: 100%;
   height: 100%;
 }
 
+@media (min-width: 700px) {
+  .recommendations {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
 .recommendations {
-  background-color: rgb(216, 216, 216);
+  border: solid var(--color3);
+  border-width: 0.5px 0.5px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+}
+.space-bottom {
+  height: 250px;
+}
+
+.space-bottom50 {
+  height: 50px;
+}
+
+.bottom-container {
+  width: 100%;
+  background-color: var(--color4);
+  position: fixed;
+  bottom: 0;
+  left: -9.6px;
+  z-index: 9999;
+  border-radius: 0;
   padding-left: 1rem;
   padding-right: 1rem;
 }
 
-.questionnaire {
-  background-color: azure;
+@keyframes wobble {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    left: 0%;
+  }
+  to {
+    left: -100%;
+  }
+}
+
+.grid-container.full.questionnaire[wobble="1"] {
+  animation-name: slideIn;
+  animation-duration: 0.5s;
+  animation: wobble 0.4s 1;
+}
+
+.grid-container.full.questionnaire {
+  padding: 0;
+  animation-name: slideIn;
+  animation-duration: 0.5s;
+  min-height: 250px;
+  background-color: var(--color4);
+}
+
+.grid-container.full.grid-container.full.questionnaire2 {
+  padding-bottom: 0;
 }
 
 .selected {
-  background-color: rgb(175, 175, 175);
+  background-color: var(--color3);
+}
+
+.genreBtn.selectedGenreBtn {
+  background-color: var(--color5);
+  color: black;
+}
+
+.genreBtn {
+  margin: auto;
+  height: 80px;
+  width: 100px;
+  white-space: normal;
+  line-height: 12px;
+  text-transform: none;
+  padding-left: 5%;
+  padding-right: 5%;
 }
 
 .dropdown-content {
@@ -708,4 +799,152 @@ img {
   min-height: 230px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
+}
+
+.label {
+  font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial,
+    sans-serif;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 0;
+  margin-bottom: 0.5rem;
+}
+.listHeader,
+.noMargin {
+  margin-bottom: 0;
+}
+.noPadding {
+  padding-bottom: 0;
+}
+
+.noGap {
+  gap: 0 20px;
+}
+.nonoGap {
+  gap: 0 0;
+}
+
+.grid-container.fifths.noPadding {
+  gap: 0;
+}
+
+.narrow {
+  max-width: 600px;
+}
+
+.space-top {
+  top: 8em;
+}
+.nextBtnContainer {
+  margin-top: 1rem;
+}
+
+.errorMessage {
+  color: crimson;
+  margin-bottom: 1rem;
+}
+
+.timeline {
+  max-width: 600px;
+  position: relative;
+  counter-reset: year 1930;
+  margin-bottom: 0;
+}
+
+@media (max-width: 600px) {
+  .timeline li:before {
+    width: 33px;
+    height: 33px;
+    line-height: 33px;
+  }
+  .timeline li:after {
+    top: 18px;
+  }
+}
+
+@media (min-width: 600px) {
+  .timeline {
+    margin: 0 20%;
+  }
+  .timeline li:before {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+  }
+  .timeline li:after {
+    top: 25px;
+  }
+}
+
+.timeline li {
+  list-style: none;
+  float: left;
+  width: 14.286%;
+  position: relative;
+  text-align: center;
+}
+.timeline li:before {
+  font-size: 11px;
+  counter-increment: year 10;
+  content: counter(year) "s";
+  border: 2px solid var(--color4);
+  border-radius: 50%;
+  display: block;
+  text-align: center;
+  margin: 0 auto 0 auto;
+  background: var(--color2);
+  color: var(--color6);
+  transition: all ease-in-out 0.3s;
+  cursor: pointer;
+}
+
+.timeline li:after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background: white;
+  color: white;
+  border-color: white;
+  left: -50%;
+  z-index: -999;
+  transition: all ease-in-out 0.3s;
+}
+.timeline li:first-child:after {
+  content: none;
+}
+.timeline li.active {
+  color: white;
+}
+.timeline li.active:before {
+  background: var(--color5);
+  color: black;
+}
+
+.sortBtn.active {
+  background-color: var(--color5);
+  color: black;
+}
+.sortBtn {
+  margin: 0;
+  width: 100px;
+  text-transform: none;
+  padding: 0;
+}
+
+input[type="radio"] {
+  display: none;
+}
+.sorth {
+  padding-top: 0.5rem;
+}
+
+.spinnerContainer {
+  position: relative;
+  left: 47%;
+}
+
+.bottomDescription {
+  font-size: 16px;
+  padding: 0 7%;
 }

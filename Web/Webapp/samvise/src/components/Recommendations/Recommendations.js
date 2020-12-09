@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import SmallMovieCard from "../SmallMovieCard/SmallMovieCard";
 import * as axios from "axios";
 import Questionnaire from "../Questionnaire/Questionnaire";
+const Spinner = require("react-spinkit");
 
 const Recommendations = ({ location }) => {
   const [displayMovie, setdisplayMovie] = useState({
@@ -11,6 +12,7 @@ const Recommendations = ({ location }) => {
   });
   const [recs, setRecs] = useState(null);
   const [trailerFrame, setTrailerFrame] = useState(null);
+  const [questionnaireStarted, setQuestionnaireStarted] = useState(false);
   // const [questionnaire, setQuestionnaire] = useState(null);
   // const [answers, setAnswers] = useState([]);
 
@@ -53,7 +55,17 @@ const Recommendations = ({ location }) => {
 
   const recommendations = () => {
     if (recs === null) {
-      return <div>LOADING</div>;
+      return (
+        <div className="space-top grid-container full">
+          <h6>
+            Generating <br />
+            recommendations...
+          </h6>
+          <div className="spinnerContainer">
+            <Spinner name="ball-grid-beat" color="#469580" fadeIn="quarter" />
+          </div>
+        </div>
+      );
     } else {
       return displayMovie.show ? (
         <div className="grid-container full">
@@ -74,13 +86,13 @@ const Recommendations = ({ location }) => {
       ) : (
         <div className="grid-container full">
           <div className="recommendations">
-            <h6>LIST A (visual features)</h6>
+            <h6 className="listHeader">LIST A (visual features)</h6>
             <ul className="grid-container fifths">
               {[...Object.values(recs.results.visual.top_items)]
                 .slice(0, 5)
                 .map((recommendation) => {
                   return (
-                    <li key={recommendation.movieId}>
+                    <li key={recommendation.movieId} className="smallCardLi">
                       <SmallMovieCard
                         movieId={recommendation.movieId}
                         displayMovie={movieDetailsCallback}
@@ -90,14 +102,15 @@ const Recommendations = ({ location }) => {
                 })}
             </ul>
           </div>
+
           <div className="recommendations">
-            <h6>LIST B (subtitles)</h6>
+            <h6 className="listHeader">LIST B (subtitles)</h6>
             <ul className="grid-container fifths">
               {[...Object.values(recs.results.subtitles.top_items)]
                 .slice(0, 5)
                 .map((recommendation) => {
                   return (
-                    <li key={recommendation.movieId}>
+                    <li key={recommendation.movieId} className="smallCardLi">
                       <SmallMovieCard
                         movieId={recommendation.movieId}
                         displayMovie={movieDetailsCallback}
@@ -107,7 +120,28 @@ const Recommendations = ({ location }) => {
                 })}
             </ul>
           </div>
-          <p>Click the thumbnails to see movie info and trailer</p>
+
+          <div className="recommendations">
+            <h6 className="listHeader">LIST C (tags)</h6>
+            <ul className="grid-container fifths">
+              {[...Object.values(recs.results.tags.top_items)]
+                .slice(0, 5)
+                .map((recommendation) => {
+                  return (
+                    <li key={recommendation.movieId} className="smallCardLi">
+                      <SmallMovieCard
+                        movieId={recommendation.movieId}
+                        displayMovie={movieDetailsCallback}
+                      />
+                    </li>
+                  );
+                })}
+            </ul>
+          </div>
+
+          <p className="noMargin">
+            Click the thumbnails to see movie info and trailer
+          </p>
         </div>
       );
     }
@@ -130,30 +164,35 @@ const Recommendations = ({ location }) => {
   // };
 
   return (
-    <div>
+    <div className="recommendations-container">
       <div>{recommendations()}</div>
 
       {displayMovie.show ? (
         <div></div>
       ) : recs !== null ? (
-        <div>
-          <p>
-            List A and B contain the top movie recommendations for you from
-            different "recommenders". Please answer the following questions to
-            help us understand your preferences about these recommenders.
-          </p>
-          <Questionnaire questionnaireId="1TwH5KhBs" />
-          {/* <ol>
-            {[...Object.values(questionnaire.questions)]
-              .slice(0, 5)
-              .map((question) => {
-                return <li key={question.key}>{question.text}</li>;
-              })}
-          </ol> */}
+        <div className="bottom-container">
+          {!questionnaireStarted ? (
+            <div>
+              <div className="grid-container full nextBtnContainer ">
+                <div>
+                  <p className="bottomDescription">
+                    List A and B contain the top movie recommendations for you
+                    from different "recommenders". Please answer the following
+                    questions to help us understand your preferences about these
+                    recommenders.
+                  </p>
+                </div>
+              </div>
+              <button onClick={() => setQuestionnaireStarted(true)}>
+                Next
+              </button>
+            </div>
+          ) : (
+            <Questionnaire questionnaireId="1TwH5KhBs" nextStep="/thankyou" />
+          )}
         </div>
-      ) : (
-        <div>Loading questions</div>
-      )}
+      ) : null}
+      <div className="space-bottom"></div>
     </div>
   );
 };

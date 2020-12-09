@@ -10,6 +10,10 @@ import Login from "./components/Login/Login";
 import Panel from "./components/Panel/Panel";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import Register from "./components/Register/Register";
+import Infopage from "./components/Infopage/Infopage";
+import Demography from "./components/Demography/Demography";
+import Personality from "./components/Personality/Personality";
+import Thankyou from "./components/Thankyou/Thankyou";
 
 function App() {
   return (
@@ -19,8 +23,11 @@ function App() {
 
         <Switch>
           <Route exact path="/" component={Home} />
+          <Route exact path="/about" component={Infopage} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/register" component={Register} />
+          <PrivateRoute exact path="/demography" component={Demography} />
+          <PrivateRoute exact path="/personality" component={Personality} />
           <PrivateRoute exact path="/movies/:genres" component={Movies} />
           <PrivateRoute exact path="/genres" component={Genres} />
           <PrivateRoute exact path="/rate" component={Movie} />
@@ -29,6 +36,7 @@ function App() {
             path="/recommendations"
             component={Recommendations}
           />
+          <PrivateRoute exact path="/thankyou" component={Thankyou} />
         </Switch>
       </div>
     </Router>
