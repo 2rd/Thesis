@@ -35,6 +35,10 @@ app.use("/moviedata", movieDataRoute);
 app.use("/questionnaires", questionnairesRoute);
 app.use("/answers", answerRoute);
 
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static("build"));
+}
+
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
 });

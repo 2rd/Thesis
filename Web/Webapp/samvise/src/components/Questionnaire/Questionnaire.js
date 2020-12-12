@@ -258,13 +258,13 @@ const Questionnaire = (props) => {
 
   const likert5 = (questionKey) => {
     const alternatives = [
-      "Much more A than B and C",
-      "A little more A than B and C",
-      "A little more B than A and C",
+      "Much more A than the others",
+      "Slightly more A than the others",
+      "Slightly more B than the others",
       "About the same",
-      "Much more B than A and C",
-      "A little more C than A and B",
-      "Much more C than A and B",
+      "Much more B than the others",
+      "Slightly more C than the others",
+      "Much more C than the others",
     ];
 
     return (

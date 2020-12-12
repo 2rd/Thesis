@@ -2,6 +2,7 @@
   "name": "samvise",
   "version": "0.1.0",
   "private": true,
+  "main":"cd backend && server.js",
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "@iconify/icons-mdi": "^1.1.1",
@@ -15,6 +16,10 @@
     "halogen": "^0.2.0",
     "joi": "^17.3.0",
     "jsonwebtoken": "^8.5.1",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.10.15",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
@@ -25,8 +30,10 @@
     "web-vitals": "^0.2.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "cd backend && node server.js",
+    "build": "npm run build",
+    "install-client": "npm install",
+    "heroku-postbuild":"npm run install-client && npm run build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
