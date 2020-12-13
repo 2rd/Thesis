@@ -1,19 +1,19 @@
 import "./App.css";
 import React, { Component } from "react";
-import Movie from "./components/Movie/Movie";
-import Movies from "./components/Movies/Movies";
-import Genres from "./components/Genres/Genres";
+import Movie from "./pages/Movie";
+import Movies from "./pages/Movies";
+import Genres from "./pages/Genres";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Home from "./Home";
-import Recommendations from "./components/Recommendations/Recommendations";
-import Login from "./components/Login/Login";
-import Panel from "./components/Panel/Panel";
+import Recommendations from "./pages/Recommendations";
+import Login from "./pages/Login/Login";
+import Panel from "./pages/Panel";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
-import Register from "./components/Register/Register";
-import Infopage from "./components/Infopage/Infopage";
-import Demography from "./components/Demography/Demography";
-import Personality from "./components/Personality/Personality";
-import Thankyou from "./components/Thankyou/Thankyou";
+import Register from "./pages/Register/Register";
+import Infopage from "./pages/Infopage/Infopage";
+import Demography from "./pages/Demography";
+import Personality from "./pages/Personality";
+import Thankyou from "./pages/Thankyou";
 
 function App() {
   return (

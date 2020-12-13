@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { authContext } from "../../contexts/AuthContext";
+import { authContext } from "../contexts/AuthContext";
 
 const Panel = () => {
   const { setAuthData, auth } = useContext(authContext);

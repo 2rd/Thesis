@@ -24,20 +24,20 @@ connection.once("open", () => {
 });
 
 //import routes
+const indexRoute = require("./routes/index");
 const movieDataRoute = require("./routes/moviedata");
 const questionnairesRoute = require("./routes/questionnaires");
 const answerRoute = require("./routes/answers");
 const authRoute = require("./routes/auth");
 // const ratingsRouter = require("./routes/ratings");
 
+app.use(express.static("client/build"));
+
+app.use("/index", indexRoute);
 app.use("/auth", authRoute);
 app.use("/moviedata", movieDataRoute);
 app.use("/questionnaires", questionnairesRoute);
 app.use("/answers", answerRoute);
-
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static("build"));
-}
 
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import TmdbApi from "../../helper/TmdbApi";
+import TmdbApi from "../helper/TmdbApi";
 
-const { default: MovieCard } = require("../MovieCard/MovieCard");
+const { default: MovieCard } = require("../components/MovieCard/MovieCard");
 
 const Movies = ({ match }) => {
   const [genreMovies, setGenreMovies] = useState([]);

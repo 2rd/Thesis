@@ -1,7 +1,7 @@
 import * as axios from "axios";
 //import { getCookie } from "./utils";
 
-const all_movies = require("../data/movies.json");
+// const all_movies = require("../data/movies.json");
 
 export default class TmdbApi {
   constructor(movieId, wasFetchedCallback) {
@@ -19,13 +19,14 @@ export default class TmdbApi {
     this.data = data;
   };
 
-  setToFetch = (movieId) => {
-    const allMovies = all_movies;
+  setToFetch = async (movieId) => {
+    const allMovies = await axios.get("http://localhost:5000/moviedata");
+    // const allMovies = all_movies;
     let toFetch = null;
 
-    for (let movie of Object.entries(allMovies)) {
-      if (movie[1].movieId === movieId) {
-        toFetch = movie[1];
+    for (let movie of allMovies.data) {
+      if (movie.movieId === movieId) {
+        toFetch = movie;
         break;
       }
     }

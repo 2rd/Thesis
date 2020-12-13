@@ -1,4 +1,6 @@
-const { default: Questionnaire } = require("../Questionnaire/Questionnaire");
+const {
+  default: Questionnaire,
+} = require("../components/Questionnaire/Questionnaire");
 
 const Demography = () => {
   return (

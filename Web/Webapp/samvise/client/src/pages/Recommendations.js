@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import SmallMovieCard from "../SmallMovieCard/SmallMovieCard";
+import SmallMovieCard from "../components/SmallMovieCard/SmallMovieCard";
 import * as axios from "axios";
-import Questionnaire from "../Questionnaire/Questionnaire";
+import Questionnaire from "../components/Questionnaire/Questionnaire";
 const Spinner = require("react-spinkit");
 
 const Recommendations = ({ location }) => {

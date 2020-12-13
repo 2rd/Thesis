@@ -1,0 +1,8 @@
+moviedata:
+
+mongoimport --uri="mongodb+srv://admin:nJ81xKP9DItG@cluster0.buoan.mongodb.net/samvise?retryWrites=true&w=majority" --collection=moviedata --file=C:\Users\tordk\Documents\Master\Code\Web\Webapp\samvise\src\data\movies.json --drop --jsonArray
+
+
+questionnaires:
+
+mongoimport --uri="mongodb+srv://admin:nJ81xKP9DItG@cluster0.buoan.mongodb.net/samvise?retryWrites=true&w=majority" --collection=questionnaires --file=C:\Users\tordk\Documents\Master\Code\Web\Webapp\samvise\src\data\questionnaires.json --drop --jsonArray
