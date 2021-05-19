@@ -5,12 +5,12 @@ import lightfm
 import ast
 
 
-user_dict = pickle.load(open('data/user_dict.p', 'rb'))
-item_dict = pickle.load(open('data/item_dict.p', 'rb'))
-vis_feats = pickle.load(open('data/visual_features.p', 'rb'))
-tag_feats = pickle.load(open('data/tag_features.p', 'rb'))
-subs_feats = pickle.load(open('data/subs_features.p', 'rb'))
-user_id = 6041
+user_dict = pickle.load(open('data/10M/user_dict.p', 'rb'))
+item_dict = pickle.load(open('data/10M/item_dict.p', 'rb'))
+vis_feats = pickle.load(open('data/10M/visual_features.p', 'rb'))
+tag_feats = pickle.load(open('data/10M/tag_features.p', 'rb'))
+subs_feats = pickle.load(open('data/10M/subs_features.p', 'rb'))
+user_id = 69878
 
 
 def new_empty_csr(old_csr):
@@ -22,6 +22,7 @@ def new_empty_csr(old_csr):
 def new_interactions(movie_ids, old_interactions):
 
     movies = (list(item_dict.keys()).index(str(x)) for x in movie_ids)
+    # movies = (item_dict[str(x)] for x in movie_ids)
 
     new_interactions = new_empty_csr(old_interactions).tolil()
     for movie in movies:
@@ -57,7 +58,7 @@ def get_top_items(items, item_scores, known_positives):
     top_items_dict = {}
     i = 0
     for item in top_items:
-        if item not in known_positives:
+        if item not in known_positives and item_dict[item] != '':
             top_items_dict[i+1] = {'movieId': item, 'title': item_dict[item]}
             i += 1
         if len(top_items_dict.keys()) >= 10:
@@ -77,7 +78,8 @@ def recommendations(model, interactions, item_features):
     scores = model.predict(user_dict[user_id], np.arange(
         n_items), item_features=item_features)
 
-    top_items_dict = get_top_items(items, scores, known_positives)
+    top_items_dict = get_top_items(
+        items, scores, known_positives)
 
     positives_dict = {}
     for known in range(len(known_positives)):
@@ -87,26 +89,30 @@ def recommendations(model, interactions, item_features):
     return {'top_items': top_items_dict, 'known_positives': positives_dict}
 
 
-def recommend(ratings):
+def recommend(new_ratings):
     '''
     Takes a json object ratings {movieId:rating}
     and generates recommendations from 3 different models
     based on the ratings.
     '''
 
-    vis_model = pickle.load(open('data/vis_model.p', 'rb'))
-    tag_model = pickle.load(open('data/tag_model.p', 'rb'))
-    subs_model = pickle.load(open('data/subs_model.p', 'rb'))
+    # vis_model = pickle.load(open('data/10M/visual_model.p', 'rb'))
+    # tag_model = pickle.load(open('data/10M/tag_model.p', 'rb'))
+    # subs_model = pickle.load(open('data/10M/subs_model.p', 'rb'))
 
-    interactions = pickle.load(open('data/interactions.p', 'rb'))
-    ratings = ratings_to_likes(ast.literal_eval(ratings))
-    new_interacts = new_interactions(ratings, interactions)
+    vis_model = pickle.load(open('data/10M/visual_model_corrected.p', 'rb'))
+    tag_model = pickle.load(open('data/10M/tag_model_corrected.p', 'rb'))
+    subs_model = pickle.load(open('data/10M/subs_model_corrected.p', 'rb'))
+
+    old_interactions = pickle.load(open('data/10M/interactions.p', 'rb'))
+    new_ratings = ratings_to_likes(ast.literal_eval(new_ratings))
+    new_interacts = new_interactions(new_ratings, old_interactions)
 
     new_vis_model = retrain(vis_model, new_interacts, vis_feats)
     new_tag_model = retrain(tag_model, new_interacts, tag_feats)
     new_subs_model = retrain(subs_model, new_interacts, subs_feats)
 
-    merged_interactions = merge_interactions(interactions, new_interacts)
+    merged_interactions = merge_interactions(old_interactions, new_interacts)
 
     vis_recs = recommendations(new_vis_model, merged_interactions, vis_feats)
     tag_recs = recommendations(new_tag_model, merged_interactions, tag_feats)

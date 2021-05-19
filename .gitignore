@@ -17,4 +17,7 @@ Feature extraction/venv/Test.ipynb
 Feature extraction/venv/Output.txt
 Feature extraction/venv/Feature_extraction_old.ipynb
 Web/Webapp/samvise/node_modules
+Web/Webapp/samvise/client/build
+Web/Webapp/samviseprolific/client/build
 Web/Webapp/samvise/backend/node_modules
+Exploratory analysis/
