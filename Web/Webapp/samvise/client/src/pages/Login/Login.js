@@ -2,6 +2,7 @@ import * as axios from "axios";
 import "./login.css";
 import { useContext, useState } from "react";
 import { authContext } from "../../contexts/AuthContext";
+import { Link } from "react-router-dom";
 
 const Login = ({ history }) => {
   const [username, setUsername] = useState("");
@@ -16,7 +17,7 @@ const Login = ({ history }) => {
 
   const login = async (username, password) => {
     try {
-      const loginReq = await axios.post("http://localhost:5000/auth/login", {
+      const loginReq = await axios.post("/auth/login", {
         username: username,
         password: password,
       });
@@ -65,7 +66,15 @@ const Login = ({ history }) => {
           onChange={handleInputChange}
         ></input>
         <p className="errorMessage">{error}</p>
+
         <button type="submit">Sign in</button>
+        <Link to="/">
+          <button className="back-button">Back</button>
+        </Link>
+        <p>
+          Not registered? <br></br>
+          <Link to="/register">Register</Link>
+        </p>
       </form>
     </div>
   );

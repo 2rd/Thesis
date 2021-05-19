@@ -2,24 +2,23 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema(
+const newsletterSchema = new Schema(
   {
-    username: {
+    email: {
       type: String,
       required: true,
       unique: true,
       trim: true,
       minlength: 3,
+      maxlength: 255,
       lowercase: true,
     },
-    progress: { type: String, required: false },
-    completionTime: { type: Number, required: false },
   },
   {
     timestamps: true,
   }
 );
 
-const User = mongoose.model("User", userSchema);
+const Newsletter = mongoose.model("Newsletter", newsletterSchema);
 
-module.exports = User;
+module.exports = Newsletter;

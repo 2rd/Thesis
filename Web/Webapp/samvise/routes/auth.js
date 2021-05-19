@@ -8,11 +8,11 @@ const { route } = require("./moviedata");
 
 //VALIDATION
 
-router.route("/").get((req, res) => {
-  User.find()
-    .then((Auths) => res.json(Auths))
-    .catch((err) => res.status(400).json("Error: " + err));
-});
+// router.route("/").get((req, res) => {
+//   User.find()
+//     .then((Auths) => res.json(Auths))
+//     .catch((err) => res.status(400).json("Error: " + err));
+// });
 
 router.route("/register").post(async (req, res) => {
   // Validation

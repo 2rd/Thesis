@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import * as axios from "axios";
 import countryList from "react-select-country-list";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { authContext } from "../../contexts/AuthContext";
 
 const Questionnaire = (props) => {
@@ -12,6 +12,7 @@ const Questionnaire = (props) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const { auth } = useContext(authContext);
   const [wobble, setWobble] = useState(0);
+  const [redirect, setRedirect] = useState(false);
 
   useEffect(() => {
     fetchQuestionnaire();
@@ -20,9 +21,24 @@ const Questionnaire = (props) => {
   const fetchQuestionnaire = async () => {
     if (typeof props.questionnaireId !== "undefined") {
       const questionnaire = await axios.get(
-        `http://localhost:5000/questionnaires/${props.questionnaireId}`
+        `/questionnaires/${props.questionnaireId}`
       );
       setQuestionnaire(questionnaire.data);
+      if (typeof props.chosenRecLists !== "undefined") {
+        addAnswer("lists", props.chosenRecLists);
+      }
+    }
+  };
+
+  const postProgress = async () => {
+    try {
+      const res = await axios.post(
+        "auth/update",
+        { completionTime: Date.now(), progress: questionnaire.name },
+        { headers: { "auth-token": auth.data } }
+      );
+    } catch (err) {
+      console.log(err.response.data);
     }
   };
 
@@ -37,8 +53,19 @@ const Questionnaire = (props) => {
       questionnaire.questions[currentQuestion].input === "number" ||
       questionnaire.questions[currentQuestion].input === "age"
     ) {
-      if (answer > Math.floor(answer)) {
-        setErrorMessage("Input must be a whole number");
+      const parsed = parseInt(answer);
+      if (isNaN(parsed)) {
+        setErrorMessage("Input must be a number");
+        return;
+      }
+
+      if (
+        questionnaire.questions[currentQuestion].input === "age" &&
+        (parsed < 18 || parsed > 110)
+      ) {
+        setErrorMessage(
+          "Due to privacy rights and regulations, you must be over 18 to participate."
+        );
         return;
       }
     }
@@ -53,10 +80,19 @@ const Questionnaire = (props) => {
         setCurrentAnswer("0");
       }
     }
+    let prevAnswers = answers;
+    prevAnswers[key] = answer;
     setWobble(1);
     setCurrentQuestion(key + 1);
     addAnswer(key, answer);
     setErrorMessage(null);
+    props.progressForwardCallback();
+    if (checkIfLast()) {
+      postProgress();
+      submitAnswers(prevAnswers);
+      setQuestionnaire(null);
+      if (nextOnSamePage()) props.nextStepCallback(true);
+    }
   };
 
   const onBackClick = () => {
@@ -64,10 +100,11 @@ const Questionnaire = (props) => {
       setCurrentAnswer(answers[currentQuestion - 1]);
       setCurrentQuestion(currentQuestion - 1);
       setErrorMessage(null);
+      props.progressBackCallback();
     }
   };
 
-  const submitAnswers = () => {
+  const submitAnswers = (answers) => {
     const answer = {
       questionnaireId: props.questionnaireId,
       answers: answers,
@@ -77,11 +114,9 @@ const Questionnaire = (props) => {
 
   const postAnswer = async (answer) => {
     try {
-      const res = await axios.post(
-        "http://localhost:5000/answers/add",
-        answer,
-        { headers: { "auth-token": auth.data } }
-      );
+      const res = await axios.post("/answers/add", answer, {
+        headers: { "auth-token": auth.data },
+      });
     } catch (err) {
       console.log(err.response.data);
       setErrorMessage(err.response.data);
@@ -90,11 +125,51 @@ const Questionnaire = (props) => {
 
   const onPressEnter = (event) => {
     if (event.keyCode == 13) {
-      let prevAnswers = answers;
-      prevAnswers[currentQuestion] = event.target.value;
-      setAnswers(prevAnswers);
-      setCurrentQuestion(currentQuestion + 1);
+      onAnswerGiven(currentQuestion, event.target.value);
+      if (checkIfLast() && !nextOnSamePage()) {
+        setRedirect(true);
+      }
     }
+  };
+
+  const nextOnSamePage = () => {
+    if (typeof props.nextOnSamePage !== "undefined") {
+      return props.nextOnSamePage;
+    }
+    return false;
+  };
+
+  const toggleButtons = (questionKey) => {
+    return currentQuestion > 1 ? (
+      <div className="grid-container halves">
+        <button onClick={onBackClick} className="back-button">
+          Back
+        </button>
+        {checkIfLast() ? (
+          !nextOnSamePage() ? (
+            <Link to={props.nextStep}>
+              <button onClick={() => onAnswerGiven(questionKey, currentAnswer)}>
+                Next
+              </button>
+            </Link>
+          ) : (
+            <button onClick={() => onAnswerGiven(questionKey, currentAnswer)}>
+              Next
+            </button>
+          )
+        ) : (
+          <button onClick={() => onAnswerGiven(questionKey, currentAnswer)}>
+            Next
+          </button>
+        )}
+      </div>
+    ) : (
+      <div className="grid-container full">
+        <button onClick={() => onAnswerGiven(questionKey, currentAnswer)}>
+          Next
+        </button>
+      </div>
+    );
   };
 
   const createAlternatives = (questionKey, input) => {
@@ -115,6 +190,12 @@ const Questionnaire = (props) => {
     }
     if (input === "nationality") {
       return nationality(questionKey);
+    }
+    if (input === "likert-5-2") {
+      return likert5_2(questionKey);
+    }
+    if (input === "likert-7-2") {
+      return likert7_2(questionKey);
     }
   };
 
@@ -151,18 +232,7 @@ const Questionnaire = (props) => {
           onKeyDown={onPressEnter}
         />
 
-        {currentQuestion > 1 ? (
-          <div className="grid-container halves">
-            <button onClick={onBackClick}>Back</button>
-            <button onClick={() => onAnswerGiven(questionKey, currentAnswer)}>
-              Next
-            </button>
-          </div>
-        ) : (
-          <button onClick={() => onAnswerGiven(questionKey, currentAnswer)}>
-            Next
-          </button>
-        )}
+        {toggleButtons(questionKey)}
       </div>
     );
   };
@@ -179,18 +249,7 @@ const Questionnaire = (props) => {
           onChange={handleInputChange}
           onKeyDown={onPressEnter}
         />
-        {currentQuestion > 1 ? (
-          <div className="grid-container halves">
-            <button onClick={onBackClick}>Back</button>
-            <button onClick={() => onAnswerGiven(questionKey, currentAnswer)}>
-              Next
-            </button>
-          </div>
-        ) : (
-          <button onClick={() => onAnswerGiven(questionKey, currentAnswer)}>
-            Next
-          </button>
-        )}
+        {toggleButtons(questionKey)}
       </div>
     );
   };
@@ -207,18 +266,7 @@ const Questionnaire = (props) => {
             </option>
           ))}
         </select>
-        {currentQuestion > 1 ? (
-          <div className="grid-container halves">
-            <button onClick={onBackClick}>Back</button>
-            <button onClick={() => onAnswerGiven(questionKey, currentAnswer)}>
-              Next
-            </button>
-          </div>
-        ) : (
-          <button onClick={() => onAnswerGiven(questionKey, currentAnswer)}>
-            Next
-          </button>
-        )}
+        {toggleButtons(questionKey)}
       </div>
     );
   };
@@ -227,9 +275,18 @@ const Questionnaire = (props) => {
     const alternatives = [1, 2, 3, 4, 5, 6, 7];
     return (
       <div>
-        <div className="grid-container sevenths">
+        <div className="grid-container sevenths nonoGap">
           {alternatives.map((alternative) => {
-            return (
+            return checkIfLast() ? (
+              <Link to={props.nextStep}>
+                <button
+                  className="likert7"
+                  onClick={() => onAnswerGiven(questionKey, alternative)}
+                >
+                  {alternative}
+                </button>
+              </Link>
+            ) : (
               <button
                 className="likert7"
                 onClick={() => onAnswerGiven(questionKey, alternative)}
@@ -256,21 +313,85 @@ const Questionnaire = (props) => {
     );
   };
 
+  const likert7_2 = (questionKey) => {
+    // const alternatives = [
+    //   "Worst imaginable",
+    //   "Awful",
+    //   "Poor",
+    //   "Fair",
+    //   "Good",
+    //   "Excellent",
+    //   "Best imaginable",
+    // ];
+    const alternatives = [1, 2, 3, 4, 5, 6, 7];
+    return (
+      <div>
+        <div className="grid-container sevenths nonoGap">
+          {alternatives.map((alternative) => {
+            return checkIfLast() ? (
+              <Link to={props.nextStep}>
+                <button
+                  className="likert7"
+                  onClick={() => onAnswerGiven(questionKey, alternative)}
+                >
+                  {alternative}
+                </button>
+              </Link>
+            ) : (
+              <button
+                className="likert7"
+                onClick={() => onAnswerGiven(questionKey, alternative)}
+              >
+                {alternative}
+              </button>
+            );
+          })}
+        </div>
+        <div className="grid-container fifths">
+          <div>
+            <p className="likert7Txt">Worst imaginable</p>
+          </div>
+          <div>{/* <p className="likert7Txt">Awful</p> */}</div>
+          {/* <div>
+            <p className="likert7Txt">Poor</p>
+          </div> */}
+          <div>
+            <p className="likert7Txt">Fair</p>
+          </div>
+          {/* <div>
+            <p className="likert7Txt">Good</p>
+          </div> */}
+          <div>{/* <p className="likert7Txt">Excellent</p> */}</div>
+          <div>
+            <p className="likert7Txt">Best imaginable</p>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const likert5 = (questionKey) => {
     const alternatives = [
-      "Much more A than the others",
-      "Slightly more A than the others",
-      "Slightly more B than the others",
+      "Much more List A",
+      "Slightly more List A",
       "About the same",
-      "Much more B than the others",
-      "Slightly more C than the others",
-      "Much more C than the others",
+      "Slightly more List B",
+      "Much more List B",
     ];
 
     return (
-      <div className="grid-container sevenths noPadding nonoGap">
+      <div className="grid-container fifths noPadding nonoGap">
         {alternatives.map((alternative) => {
-          return (
+          return checkIfLast() ? (
+            <Link to={props.nextStep}>
+              <button
+                className="likert5"
+                onClick={() => onAnswerGiven(questionKey, alternative)}
+              >
+                {alternative}
+              </button>
+            </Link>
+          ) : (
             <button
               className="likert5"
               onClick={() => onAnswerGiven(questionKey, alternative)}
@@ -279,8 +400,88 @@ const Questionnaire = (props) => {
             </button>
           );
         })}
+        <div>
+          <p className="noMargin">List A</p>
+        </div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div>
+          <p className="noMargin">List B</p>
+        </div>
       </div>
     );
+  };
+
+  const likert5_2 = (questionKey) => {
+    const alternatives = [1, 2, 3, 4, 5];
+
+    return (
+      <div className="grid-container fifths noPadding nonoGap">
+        {alternatives.map((alternative) => {
+          return checkIfLast() ? (
+            <Link to={props.nextStep}>
+              <button
+                className="likert5"
+                onClick={() => onAnswerGiven(questionKey, alternative)}
+              >
+                {alternative}
+              </button>
+            </Link>
+          ) : (
+            <button
+              className="likert5"
+              onClick={() => onAnswerGiven(questionKey, alternative)}
+            >
+              {alternative}
+            </button>
+          );
+        })}
+
+        <div className="likert5-2">
+          <p>Strongly disagree</p>
+        </div>
+        <div></div>
+        <div className="likert5-2">
+          <p>Neither agree nor disagree</p>
+        </div>
+        <div></div>
+        <div className="likert5-2">
+          <p>Strongly agree</p>
+        </div>
+      </div>
+    );
+  };
+
+  // const likert5 = (questionKey) => {
+  //   const alternatives = [
+  //     "Much more A than the others",
+  //     "Slightly more A than the others",
+  //     "Slightly more B than the others",
+  //     "About the same",
+  //     "Much more B than the others",
+  //     "Slightly more C than the others",
+  //     "Much more C than the others",
+  //   ];
+
+  //   return (
+  //     <div className="grid-container sevenths noPadding nonoGap">
+  //       {alternatives.map((alternative) => {
+  //         return (
+  //           <button
+  //             className="likert5"
+  //             onClick={() => onAnswerGiven(questionKey, alternative)}
+  //           >
+  //             {alternative}
+  //           </button>
+  //         );
+  //       })}
+  //     </div>
+  //   );
+  // };
+
+  const checkIfLast = () => {
+    return currentQuestion >= Object.keys(questionnaire.questions).length;
   };
 
   const checkIfButtons = (inputType) => {
@@ -302,59 +503,54 @@ const Questionnaire = (props) => {
     setCurrentAnswer(value);
   };
 
-  return (
+  return !redirect ? (
     <div>
       {questionnaire !== null ? (
-        <div
-          className="grid-container full questionnaire"
-          onAnimationEnd={() => setWobble(0)}
-          wobble={wobble}
-        >
-          {currentQuestion < Object.keys(questionnaire.questions).length + 1 ? (
-            <div className="grid-container full questionnaire2">
-              {checkIfButtons(
-                questionnaire.questions[currentQuestion].input
-              ) ? (
-                <p className="label">
-                  {questionnaire.questions[currentQuestion].text}
-                </p>
-              ) : (
-                <label
-                  className="label"
-                  htmlFor="answer"
-                  value={questionnaire.questions[currentQuestion].text}
-                >
-                  {questionnaire.questions[currentQuestion].text}
-                </label>
-              )}
-              {createAlternatives(
-                questionnaire.questions[currentQuestion].key,
-                questionnaire.questions[currentQuestion].input
-              )}
-              {checkIfButtons(
-                questionnaire.questions[currentQuestion].input
-              ) ? (
-                currentQuestion > 1 ? (
-                  <div className="grid-container full">
-                    <button onClick={onBackClick}>Back</button>
-                  </div>
-                ) : null
-              ) : null}
-              <p>{errorMessage}</p>
-            </div>
-          ) : (
-            <div className="grid-container halves">
-              <button onClick={onBackClick}>Back</button>
-              <Link to={props.nextStep}>
-                <button onClick={submitAnswers}>Next</button>
-              </Link>
-            </div>
-          )}
+        <div className="grid-container full questionnaire">
+          <div
+            className="grid-container full questionnaire2"
+            onAnimationEnd={() => setWobble(0)}
+            wobble={wobble}
+          >
+            {checkIfButtons(questionnaire.questions[currentQuestion].input) ? (
+              <p className="label">
+                {questionnaire.questions[currentQuestion].key}/
+                {Object.keys(questionnaire.questions).length}.{" "}
+                {questionnaire.questions[currentQuestion].text}
+              </p>
+            ) : (
+              <label
+                className="label"
+                htmlFor="answer"
+                value={questionnaire.questions[currentQuestion].text}
+              >
+                {questionnaire.questions[currentQuestion].key}/
+                {Object.keys(questionnaire.questions).length}.{" "}
+                {questionnaire.questions[currentQuestion].text}
+              </label>
+            )}
+            {createAlternatives(
+              questionnaire.questions[currentQuestion].key,
+              questionnaire.questions[currentQuestion].input
+            )}
+            {checkIfButtons(questionnaire.questions[currentQuestion].input) ? (
+              currentQuestion > 1 ? (
+                <div className="grid-container full">
+                  <button onClick={onBackClick} className="back-button">
+                    Back
+                  </button>
+                </div>
+              ) : null
+            ) : null}
+            <p className="errorMessage">{errorMessage}</p>
+          </div>
         </div>
       ) : (
         <div></div>
       )}
     </div>
+  ) : (
+    <Redirect push to={props.nextStep}></Redirect>
   );
 };
 

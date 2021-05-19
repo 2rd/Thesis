@@ -1,7 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import TmdbApi from "../helper/TmdbApi";
 import { Link } from "react-router-dom";
 import StarRating from "../components/StarRating/StarRating";
+import Progressbar from "../components/Progressbar/Progressbar";
+import { authContext } from "../contexts/AuthContext";
+import * as axios from "axios";
+import { InlineIcon } from "@iconify/react";
+import menuDown from "@iconify/icons-mdi/menu-down";
+import menuUp from "@iconify/icons-mdi/menu-up";
+
+const Spinner = require("react-spinkit");
 
 const Movie = ({ location, match }) => {
   const [api, setApi] = useState(null);
@@ -9,9 +17,14 @@ const Movie = ({ location, match }) => {
   const [trailerFrame, setTrailerFrame] = useState(null);
   const [credits, setCredits] = useState(null);
   const [ratings, setRatings] = useState({});
+  const [ratingArr, setRatingArr] = useState([]);
   const [isRated, setIsRated] = useState(false);
   const [wasFetched, setWasFetched] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [showMovieInfo, setShowMovieInfo] = useState(false);
+  const [progress, setProgress] = useState(35);
+  const [timeSpent, setTimeSpent] = useState(Date.now());
+  const { auth } = useContext(authContext);
 
   useEffect(() => {
     if (wasFetched) {
@@ -32,15 +45,17 @@ const Movie = ({ location, match }) => {
     }
   };
   const fetchCredits = async () => {
-    if (wasFetched) {
+    if (wasFetched && api.data.movieData.length !== 0) {
       const credits = await api.getCredits();
       setCredits(credits.data);
     }
   };
 
   const fetchTrailer = async () => {
-    const trailer = await api.getMovieTrailer();
-    setTrailerFrame(createTrailerFrame(trailer));
+    if (wasFetched && api.data.movieData.length !== 0) {
+      const trailer = await api.getMovieTrailer();
+      setTrailerFrame(createTrailerFrame(trailer));
+    }
   };
 
   const createTrailerFrame = (trailer) => {
@@ -55,14 +70,35 @@ const Movie = ({ location, match }) => {
 
   const onNextClick = () => {
     if (isRated) {
+      postRating(currentMovie, timeSpent);
       setIsRated(false);
       const nextMovie = currentMovie + 1;
       setCurrentMovie(nextMovie);
       setWasFetched(false);
       setErrorMessage(null);
+      setProgress(progress + 1.67);
+      setTimeSpent(Date.now());
     } else {
-      setErrorMessage("Rate the movie to continue");
+      setErrorMessage("Please rate the movie to continue");
     }
+  };
+
+  const postRating = async (movie, time) => {
+    const rating = {
+      movieId: Object.entries(ratingArr[movie])[0][0],
+      rating: Object.entries(ratingArr[movie])[0][1],
+      timespent: Date.now() - time,
+    };
+
+    try {
+      const res = await axios.post("/ratings/update", rating, {
+        headers: { "auth-token": auth.data },
+      });
+    } catch (err) {
+      console.log(err.response.data);
+      // setErrorMessage(err.response.data);
+    }
+    // console.log(ratings);
   };
 
   const movieCredits = () => {
@@ -99,7 +135,7 @@ const Movie = ({ location, match }) => {
   const movieInfo = () => {
     return (
       <div>
-        <h4>{`${api.data.movieData.title} (${api.data.movieData.release_date})`}</h4>
+        <h4 className="movieTitle">{`${api.data.movieData.title} (${api.data.movieData.release_date})`}</h4>
         <div>{api.data.movieData.overview}</div>
       </div>
     );
@@ -107,8 +143,13 @@ const Movie = ({ location, match }) => {
 
   const ratingCallback = (rating) => {
     let updatedRatings = ratings;
-
     updatedRatings[api.data.movieData.movieId] = parseInt(rating);
+
+    let updatedRatingArr = ratingArr;
+    let ratingObj = {};
+    ratingObj[api.data.movieData.movieId] = parseInt(rating);
+    updatedRatingArr.push(ratingObj);
+    setRatingArr(updatedRatingArr);
     setRatings(updatedRatings);
     setIsRated(true);
   };
@@ -126,29 +167,72 @@ const Movie = ({ location, match }) => {
           <Link
             to={{ pathname: "/recommendations", state: { ratings: ratings } }}
           >
-            <button>Next</button>
+            <button onClick={() => postRating(currentMovie, timeSpent)}>
+              Next
+            </button>
           </Link>
         ) : (
-          <p>Continue</p>
+          <button
+            onClick={() => setErrorMessage("Please rate the movie to continue")}
+          >
+            Next
+          </button>
         )}
       </div>
     );
   };
 
   return wasFetched ? (
-    <div>
-      <div className="grid-container full narrow">
-        <div className="iframeContainer">{trailerFrame}</div>
-        <StarRating ratingCallback={ratingCallback} key={currentMovie} />
-        <div className="errorMessage">{errorMessage}</div>
-        {movieInfo()}
-        {credits !== null ? movieCredits() : <div></div>}
+    api.data.movieData.length !== 0 ? (
+      <div>
+        <Progressbar progress={progress} />
+        <div className="grid-container full narrow">
+          <div>
+            <h4 className="noPadding noMargin">Please rate the movie</h4>
+            <p>Rate the movie from 1-5 by clicking on the stars below</p>
+          </div>
+          <div className="iframeContainer">{trailerFrame}</div>
+
+          <StarRating ratingCallback={ratingCallback} key={currentMovie} />
+
+          <h4 className="movieTitle">{`${api.data.movieData.title} (${api.data.movieData.release_date})`}</h4>
+
+          {!showMovieInfo ? (
+            <a onClick={() => setShowMovieInfo(true)}>
+              Show movie info <InlineIcon icon={menuDown} />
+            </a>
+          ) : (
+            <div>
+              <div>{api.data.movieData.overview}</div>
+              {credits !== null ? movieCredits() : <div></div>}
+              <a onClick={() => setShowMovieInfo(false)}>
+                Hide movie info
+                <InlineIcon icon={menuUp} />
+              </a>
+            </div>
+          )}
+        </div>
+        <div className="space-bottom100"></div>
+        <div className="bottom-container">
+          <div className="errorMessage">{errorMessage}</div>
+          {next()}
+        </div>
       </div>
-      <div className="space-bottom50"></div>
-      <div className="bottom-container">{next()}</div>
-    </div>
+    ) : (
+      <div>
+        <p>An error occured - please click "next" to skip this section.</p>
+        <Link to="/sus">
+          <button>Next</button>
+        </Link>
+      </div>
+    )
   ) : (
-    <div className="space-top"></div>
+    <div style={{ marginTop: "10%" }}>
+      <Progressbar progress={progress} />
+      <div className="spinnerContainer">
+        <Spinner name="ball-grid-beat" color="#469580" fadeIn="full" />
+      </div>
+    </div>
   );
 };
 

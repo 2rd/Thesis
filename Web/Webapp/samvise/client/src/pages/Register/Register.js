@@ -2,6 +2,7 @@ import * as axios from "axios";
 import "./register.css";
 import { useContext, useState } from "react";
 import { authContext } from "../../contexts/AuthContext";
+import { Link } from "react-router-dom";
 
 const Register = ({ history }) => {
   const [username, setUsername] = useState("");
@@ -17,7 +18,7 @@ const Register = ({ history }) => {
   const register = async (username, password) => {
     try {
       const registrationReq = await axios
-        .post("http://localhost:5000/auth/register", {
+        .post("/auth/register", {
           username: username,
           password: password,
         })
@@ -30,7 +31,7 @@ const Register = ({ history }) => {
 
   const login = async (username, password) => {
     try {
-      const loginReq = await axios.post("http://localhost:5000/auth/login", {
+      const loginReq = await axios.post("/auth/login", {
         username: username,
         password: password,
       });
@@ -80,6 +81,14 @@ const Register = ({ history }) => {
         ></input>
         <p className="errorMessage">{error}</p>
         <button type="submit">Register</button>
+        <Link to="/about">
+          <button className="back-button">Back</button>
+        </Link>
+
+        <p>
+          Already registered? <br></br>
+          <Link to="/register">Sign in</Link>
+        </p>
       </form>
     </div>
   );

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import TmdbApi from "../../helper/TmdbApi";
+const Spinner = require("react-spinkit");
 
 const SmallMovieCard = (props) => {
   const [api, setApi] = useState(null);
@@ -24,16 +25,23 @@ const SmallMovieCard = (props) => {
   };
 
   const onClickedDetails = () => {
-    props.displayMovie(api);
+    if (api.data.movieData.length !== 0) {
+      props.displayMovie(api);
+    }
   };
 
   return wasFetched ? (
     <button className="cardContainer small" onClick={onClickedDetails}>
       <div>
-        <img
-          src={`http://image.tmdb.org/t/p/w92${api.data.movieData.poster_path}`}
-          alt={api.data.movieData.title}
-        ></img>
+        {api.data.movieData.length !== 0 ? (
+          <img
+            // src={`http://image.tmdb.org/t/p/w92${api.data.movieData.poster_path}`}
+            src={`https://image.tmdb.org/t/p/w154${api.data.movieData.poster_path}`}
+            alt={api.data.movieData.title}
+          ></img>
+        ) : (
+          <p>{props.movieTitle}</p>
+        )}
       </div>
 
       {/* <div>
@@ -43,7 +51,15 @@ const SmallMovieCard = (props) => {
       </div> */}
     </button>
   ) : (
-    <div></div>
+    <div className="grid-container full loading-container">
+      <div>
+        <Spinner name="double-bounce" color="#469580" fadeIn="quarter" />
+      </div>
+
+      <p className="tinytext">
+        Loading <br /> recommendation...
+      </p>
+    </div>
   );
 };
 

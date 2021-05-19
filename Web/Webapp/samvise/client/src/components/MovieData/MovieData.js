@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 const api_key = "f1cf71c4de5c110d27c1a458acf3b2e3";
+const port = process.env.PORT;
 
 const MovieData = (props) => {
   useEffect(() => {
@@ -11,7 +12,7 @@ const MovieData = (props) => {
   const [data, setData] = useState({ movieData: [], isFetching: false });
 
   const fetchMovie = async () => {
-    const allMovies = await axios.get("http://localhost:5000/moviedata");
+    const allMovies = await axios.get("/moviedata");
     let toFetch = null;
 
     for (let movie of Object.entries(allMovies)) {

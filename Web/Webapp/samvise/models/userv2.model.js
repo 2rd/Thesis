@@ -4,13 +4,10 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
   {
-    username: {
-      type: String,
+    userId: {
+      type: mongoose.Types.ObjectId,
       required: true,
       unique: true,
-      trim: true,
-      minlength: 3,
-      lowercase: true,
     },
     progress: { type: String, required: false },
     completionTime: { type: Number, required: false },
@@ -20,6 +17,7 @@ const userSchema = new Schema(
   }
 );
 
-const User = mongoose.model("User", userSchema);
+// const User = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema, "users2");
 
 module.exports = User;

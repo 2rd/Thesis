@@ -5,6 +5,7 @@ import * as axios from "axios";
 
 export default class TmdbApi {
   constructor(movieId, wasFetchedCallback) {
+    this.onFetchedCallback = wasFetchedCallback;
     this.api_token =
       "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmMWNmNzFjNGRlNWMxMTBkMjdjMWE0NThhY2YzYjJlMyIsInN1YiI6IjVmYTAwMWMwMTYwZTczMDAzODQ0YzNlMSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.kjoHCR-rXlUDZFZCo2S-TM8C5pe-h9q2teoLAEpShl0";
     this.api_key = "f1cf71c4de5c110d27c1a458acf3b2e3";
@@ -12,42 +13,47 @@ export default class TmdbApi {
     this.api_url = process.env.REACT_APP_API_ENDPOINT;
     this.toFetch = this.setToFetch(movieId);
     this.data = { movieData: [], isFetching: false, wasFetched: false };
-    this.onFetchedCallback = wasFetchedCallback;
   }
+
+  delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
   setData = (data) => {
     this.data = data;
   };
 
   setToFetch = async (movieId) => {
-    const allMovies = await axios.get("http://localhost:5000/moviedata");
+    const allMovies = await axios.get("/moviedata");
     // const allMovies = all_movies;
     let toFetch = null;
-
     for (let movie of allMovies.data) {
       if (movie.movieId === movieId) {
         toFetch = movie;
         break;
       }
     }
-    let idFix = "";
-    if (toFetch.imdbId.length < 7) {
-      idFix = "0";
-      if (toFetch.imdbId.length < 6) {
-        idFix = "00";
-        if (toFetch.imdbId.length < 5) {
-          idFix = "000";
-          if (toFetch.imdbId.length < 4) {
-            idFix = "0000";
+    if (toFetch !== null) {
+      let idFix = "";
+      if (toFetch.imdbId.length < 7) {
+        idFix = "0";
+        if (toFetch.imdbId.length < 6) {
+          idFix = "00";
+          if (toFetch.imdbId.length < 5) {
+            idFix = "000";
+            if (toFetch.imdbId.length < 4) {
+              idFix = "0000";
+            }
           }
         }
       }
+      toFetch.imdbId = idFix + toFetch.imdbId;
+      this.fetchMovie(toFetch);
+      return toFetch;
+    } else {
+      this.onFetchedCallback(true);
+      return null;
     }
-    toFetch.imdbId = idFix + toFetch.imdbId;
-
-    this.fetchMovie(toFetch);
-    return toFetch;
   };
+  // };
 
   init = () => {
     //this.api_token = getCookie("ACCESS_TOKEN")
