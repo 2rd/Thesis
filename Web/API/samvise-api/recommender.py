@@ -96,13 +96,9 @@ def recommend(new_ratings):
     based on the ratings.
     '''
 
-    # vis_model = pickle.load(open('data/10M/visual_model.p', 'rb'))
-    # tag_model = pickle.load(open('data/10M/tag_model.p', 'rb'))
-    # subs_model = pickle.load(open('data/10M/subs_model.p', 'rb'))
-
-    vis_model = pickle.load(open('data/10M/visual_model_corrected.p', 'rb'))
-    tag_model = pickle.load(open('data/10M/tag_model_corrected.p', 'rb'))
-    subs_model = pickle.load(open('data/10M/subs_model_corrected.p', 'rb'))
+    vis_model = pickle.load(open('data/10M/visual_model.p', 'rb'))
+    tag_model = pickle.load(open('data/10M/tag_model.p', 'rb'))
+    subs_model = pickle.load(open('data/10M/subs_model.p', 'rb'))
 
     old_interactions = pickle.load(open('data/10M/interactions.p', 'rb'))
     new_ratings = ratings_to_likes(ast.literal_eval(new_ratings))
